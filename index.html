@@ -79,6 +79,8 @@
       letter-spacing: 0.5px;
     }
 
+    /* すべてのテキスト入力欄を完全統一 */
+    input[type="text"],
     textarea#tokenInput {
       width: 100%;
       padding: 14px 16px;
@@ -89,16 +91,21 @@
       color: #fff;
       font-family: 'Courier New', monospace;
       font-size: 15px;
-      resize: vertical;
-      min-height: 120px;
       transition: var(--transition);
       backdrop-filter: blur(10px);
+      resize: vertical;
     }
+
+    input[type="text"]:focus,
     textarea#tokenInput:focus {
       outline: none;
       border-color: var(--glow);
       box-shadow: 0 0 0 4px rgba(100,214,255,0.2), 0 8px 25px rgba(100,214,255,0.15);
       background: rgba(21,22,27,0.9);
+    }
+
+    textarea#tokenInput {
+      min-height: 120px;
     }
 
     .button-row {
@@ -216,9 +223,7 @@
     .checkbox input:checked {
       background: linear-gradient(135deg, var(--accent), var(--glow));
     }
-    .checkbox input:checked::before {
-      transform: translateX(22px);
-    }
+    .checkbox input:checked::before { transform: translateX(22px); }
     .checkbox input:checked + span { color: var(--glow-strong); }
 
     button.primary {
@@ -449,7 +454,7 @@ class App {
     };
   }
 
-  // るーしー仕様：複数トークン一括追加（神機能）
+  // 複数トークン一括追加（改行・ファイル・Enterキー対応）
   addTokensFromText(inputValue) {
     if (!inputValue.trim()) return 0;
     const lines = inputValue.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
@@ -534,7 +539,6 @@ class App {
   }
 
   bindEvents() {
-    // 追加ボタン
     this.el.addBtn.addEventListener('click', () => this.addTokensFromText(this.el.tokenInput.value));
 
     // Enterで追加（Shift+Enterで改行）
@@ -553,7 +557,6 @@ class App {
       const reader = new FileReader();
       reader.onload = ev => {
         this.addTokensFromText(ev.target.result);
-        this.log(`ファイルから読み込み完了`, 'success');
       };
       reader.readAsText(file);
     });
