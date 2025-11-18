@@ -74,6 +74,19 @@
       padding:4px 10px; border-radius:6px; font-size:12px; cursor:pointer;
     }
 
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;   /* ← 左右に均等に分割 */
+      gap: 12px;
+      margin-top: 10px;
+    }
+    
+    @media (max-width: 480px) {
+     .button-row {
+       grid-template-columns: 1fr 1fr;
+    }
+  }
+    
     .toggle-row {
       display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
       gap:16px; margin:28px 0;
@@ -125,10 +138,10 @@
 
     <label>Token</label>
     <input type="text" id="tokenInput" placeholder="改行で複数可">
-    <div class="row">
-      <button class="secondary" id="addBtn">追加</button>
-      <button class="secondary" id="uploadBtn">ファイル読み込み</button>
-      <input type="file" id="fileInput" style="display:none">
+    <div class="button-row">
+    <button class="secondary" id="uploadBtn">ファイル読み込み</button>
+    <button class="secondary" id="addBtn">追加</button>
+    <input type="file" id="fileInput" style="display:none">
     </div>
 
     <div class="token-list" id="tokenList">
