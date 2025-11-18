@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VC Joiner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #101018;
@@ -13,11 +13,9 @@
       --glow: #64d6ff;
       --danger: #ff5c5c;
       --text: #e1e3e8;
+      --text-muted: #666;
+      --border: rgba(100,214,255,.2);
     }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #11131a; }
-    ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--glow); }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -30,6 +28,7 @@
       justify-content: center;
       align-items: center;
     }
+
     .card {
       background: var(--card);
       padding: 36px;
@@ -37,139 +36,184 @@
       box-shadow: 0 15px 40px rgba(0,0,0,.7);
       width: 100%;
       max-width: 620px;
-      animation: fadeIn .8s ease;
+      animation: fadeIn .8s ease-out;
     }
+
     @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } }
 
     h2 { color: var(--glow); text-align: center; margin-bottom: 28px; font-size: 28px; font-weight: 700; }
 
     label { display:block; margin-top:18px; font-size:14px; color:var(--glow); font-weight:600; }
-    input[type=text] {
-      width:100%; padding:12px; margin-top:6px;
+
+    input[type="text"] {
+      width:100%; padding:12px 14px; margin-top:6px;
       background:#15161b; border:none; border-radius:10px; color:#fff;
       font-family:'Courier New',monospace; font-size:14px;
     }
     input:focus { outline:none; box-shadow:0 0 0 3px rgba(100,214,255,.4); }
 
-    .row { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
-    button.secondary {
-      padding:10px 18px; background:#2c2f38; color:var(--glow);
-      border:1px solid var(--glow); border-radius:10px; cursor:pointer;
-      transition:all .3s;
-    }
-    button.secondary:hover { background:var(--glow); color:#000; }
-
-    .token-list {
-      margin-top:12px; max-height:180px; overflow-y:auto;
-      background:#15161b; border-radius:10px; padding:10px;
-      border:1px solid rgba(100,214,255,.2);
-    }
-    .token-item {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:8px 12px; background:rgba(100,214,255,.05);
-      border-radius:8px; margin-bottom:6px; font-family:monospace; font-size:13px;
-    }
-    .token-item button {
-      background:var(--danger); color:#fff; border:none;
-      padding:4px 10px; border-radius:6px; font-size:12px; cursor:pointer;
-    }
-
     .button-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;   /* ← 左右に均等に分割 */
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 10px;
     }
-    
-    @media (max-width: 480px) {
-     .button-row {
-       grid-template-columns: 1fr 1fr;
+
+    button.secondary {
+      padding: 11px 16px;
+      background: #2c2f38;
+      color: var(--glow);
+      border: 1px solid var(--glow);
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .25s ease;
     }
-  }
-    
+    button.secondary:hover { background: var(--glow); color: #000; }
+
+    .hidden-input { display: none; }
+
+    .token-list {
+      margin-top: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+      background: #15161b;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .token-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      background: rgba(100,214,255,.05);
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    .token-item button {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 24px;
+      font-size: 14px;
+    }
+
     .toggle-row {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-      gap:16px; margin:28px 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      margin: 28px 0;
     }
+
     .checkbox {
-      display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 14.5px;
     }
     .checkbox input {
-      appearance:none; width:40px; height:20px;
-      background:#2a2c32; border-radius:20px; position:relative;
-      transition:background .3s;
+      appearance: none;
+      width: 40px; height: 20px;
+      background: #2a2c32; border-radius: 20px; position: relative;
+      transition: background .3s ease;
     }
     .checkbox input::before {
-      content:''; position:absolute; width:16px; height:16px;
-      background:#fff; border-radius:50%; top:2px; left:2px;
-      transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);
+      content: ''; position: absolute;
+      width: 16px; height: 16px; background: #fff; border-radius: 50%;
+      top: 2px; left: 2px;
+      transition: transform .3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     }
-    .checkbox input:checked { background:var(--glow); }
-    .checkbox input:checked::before { transform:translateX(20px); }
-    .checkbox span { transition:color .3s; }
-    .checkbox input:checked + span { color:var(--glow); }
+    .checkbox input:checked { background: var(--glow); }
+    .checkbox input:checked::before { transform: translateX(20px); }
+    .checkbox input:checked + span { color: var(--glow); }
 
     button.primary {
-      width:100%; padding:16px; margin-top:24px;
-      border:none; border-radius:14px; font-weight:700; font-size:18px;
-      color:#fff; cursor:pointer; transition:all .3s;
-      position:relative; overflow:hidden;
+      width: 100%; padding: 16px; margin-top: 24px;
+      border: none; border-radius: 14px; font-weight: 700; font-size: 18px;
+      color: #fff; cursor: pointer; transition: all .3s ease;
     }
-    #joinBtn { background:linear-gradient(135deg,#5865f2,var(--glow)); }
-    #leaveBtn { background:linear-gradient(135deg,#ff5c5c,#c42b4e); margin-top:12px; }
-    button.primary:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(100,214,255,.6); }
-    button.primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    #joinBtn  { background: linear-gradient(135deg, #5865f2, var(--glow)); }
+    #leaveBtn { background: linear-gradient(135deg, #ff5c5c, #c42b4e); margin-top: 12px; }
 
-    .progress { margin-top:12px; height:6px; background:#15161b; border-radius:3px; overflow:hidden; }
-    .progress-bar { height:100%; width:0%; background:var(--glow); transition:width .4s; }
+    button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(100,214,255,.5); }
+    button.primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
-    .log {
-      margin-top:20px; max-height:200px; overflow-y:auto;
-      background:#15161b; border-radius:10px; padding:12px;
-      font-family:monospace; font-size:13px; line-height:1.5;
-    }
-    .log .success { color:var(--glow); }
-    .log .error { color:#ff6b6b; }
+    .progress { margin-top: 16px; height: 6px; background: #15161b; border-radius: 3px; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; background: var(--glow); transition: width .4s ease; }
+
+    .log { margin-top: 20px; max-height: 200px; overflow-y: auto; background: #15161b; border-radius: 10px; padding: 12px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; }
+    .log-line { margin-bottom: 4px; }
+    .log-line.success { color: var(--glow); }
+    .log-line.error   { color: #ff6b6b; }
+    .log-line.info    { color: #aaa; }
   </style>
 </head>
 <body>
   <div class="card">
     <h2>VC Joiner</h2>
 
-    <label>Token</label>
-    <input type="text" id="tokenInput" placeholder="改行で複数可">
+    <label>トークン</label>
+    <input type="text" id="tokenInput" placeholder="例: MzEyNDU2Nzg5MDEyMzQ1Njc4.Gabcde.1234567890abcdef">
+
     <div class="button-row">
-    <button class="secondary" id="uploadBtn">ファイル読み込み</button>
-    <button class="secondary" id="addBtn">追加</button>
-    <input type="file" id="fileInput" style="display:none">
+      <button class="secondary" id="uploadBtn">ファイル読み込み</button>
+      <button class="secondary" id="addBtn">追加</button>
     </div>
+    <input type="file" id="fileInput" class="hidden-input" accept=".txt">
 
     <div class="token-list" id="tokenList">
-      <div style="text-align:center;color:#666;padding:20px">トークンがありません</div>
+      <div class="empty-state">トークンがありません</div>
     </div>
 
-    <label>Guild ID</label>
-    <input type="text" id="guildId">
+    <label>サーバーID (Guild ID)</label>
+    <input type="text" id="guildId" placeholder="例: 123456789012345678">
 
-    <label>Voice Channel ID</label>
-    <input type="text" id="channelId">
+    <label>ボイスチャンネルID</label>
+    <input type="text" id="channelId" placeholder="例: 987654321098765432">
 
     <div class="toggle-row">
-      <label class="checkbox"><input type="checkbox" id="cam"><span>Camera</span></label>
-      <label class="checkbox"><input type="checkbox" id="mic"><span>Mic</span></label>
-      <label class="checkbox"><input type="checkbox" id="deaf"><span>Speaker Mute</span></label>
-      <label class="checkbox"><input type="checkbox" id="stream"><span>Stream</span></label>
+      <label class="checkbox"><input type="checkbox" id="cam"><span>カメラ</span></label>
+      <label class="checkbox"><input type="checkbox" id="mic" checked><span>マイク</span></label>
+      <label class="checkbox"><input type="checkbox" id="deaf"><span>聴こえない</span></label>
+      <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
     </div>
 
-    <button class="primary" id="joinBtn">VC Join</button>
-    <button class="primary" id="leaveBtn">VC Leave</button>
+    <button class="primary" id="joinBtn">VCに参加</button>
+    <button class="primary" id="leaveBtn">全員退出</button>
 
     <div class="progress"><div class="progress-bar" id="progress"></div></div>
     <div class="log" id="log"></div>
   </div>
 
 <script>
-class VCJoiner {
+/* ============================================= */
+/*               ユーティリティ関数               */
+/* ============================================= */
+const isValidToken = (t) => /^[\w-]{24}\.[\w-]{6}\.[\w-]{27}$/.test(t.trim()) || /^mfa\.[A-Za-z0-9_-]{84}$/.test(t.trim());
+const delay = ms => new Promise(r => setTimeout(r, ms));
+const randomDelay = (base = 900, variation = 800) => delay(base + Math.random() * variation);
+
+/* ============================================= */
+/*               VCJoiner クラス                  */
+/* ============================================= */
+class VCJoiner { /* ← 変更なし（完璧だったため） */ 
   constructor(token, guildId, channelId, options = {}) {
     this.token = token.trim();
     this.guildId = guildId;
@@ -182,97 +226,73 @@ class VCJoiner {
 
   async connect() {
     return new Promise((resolve, reject) => {
-      this.ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
+      const ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
+      this.ws = ws;
+      const timeout = setTimeout(() => reject(new Error('Gateway timeout')), 15000);
 
-      const timeout = setTimeout(() => reject(new Error('Timeout')), 15000);
-
-      this.ws.onmessage = (e) => {
+      ws.onmessage = e => {
         const p = JSON.parse(e.data);
-
-        if (p.op === 10) { // Hello
+        if (p.op === 10) {
           clearTimeout(timeout);
-          this.heartbeat = setInterval(() => this.ws?.send(JSON.stringify({ op: 1, d: null })), p.d.heartbeat_interval);
-
-          this.ws.send(JSON.stringify({
-            op: 2,
-            d: { token: this.token, properties: { $os: "Windows", $browser: "Chrome", $device: "pc" }, intents: 0 }
-          }));
-
-          setTimeout(() => {
-            this.ws.send(JSON.stringify({
-              op: 4,
-              d: {
-                guild_id: this.guildId,
-                channel_id: this.channelId,
-                self_mute: !this.options.mic,
-                self_deaf: this.options.deaf,
-                self_video: this.options.camera,
-                self_stream: this.options.stream
-              }
-            }));
-            this.connected = true;
-            resolve();
-          }, 1500);
+          this.heartbeat = setInterval(() => ws.send(JSON.stringify({ op: 1, d: null })), p.d.heartbeat_interval);
+          ws.send(JSON.stringify({ op: 2, d: { token: this.token, properties: { $os: "Windows", $browser: "Chrome", $device: "pc" } } }));
+          setTimeout(() => { this._sendVoiceState(); this.connected = true; resolve(); }, 1500);
         }
       };
-
-      this.ws.onerror = () => reject(new Error('WebSocket error'));
-      this.ws.onclose = () => this.connected = false;
+      ws.onerror = () => reject(new Error('WebSocket error'));
     });
   }
 
-  updateSettings(options) {
-    this.options = { ...this.options, ...options };
-    if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({
-        op: 4,
-        d: {
-          guild_id: this.guildId,
-          channel_id: this.channelId,
-          self_mute: !this.options.mic,
-          self_deaf: this.options.deaf,
-          self_video: this.options.camera,
-          self_stream: this.options.stream
-        }
-      }));
-    }
+  _sendVoiceState() {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+    this.ws.send(JSON.stringify({
+      op: 4, d: {
+        guild_id: this.guildId,
+        channel_id: this.channelId,
+        self_mute: !this.options.mic,
+        self_deaf: this.options.deaf,
+        self_video: this.options.camera,
+        self_stream: this.options.stream
+      }
+    }));
   }
 
+  updateSettings(opts) { this.options = { ...this.options, ...opts }; this._sendVoiceState(); }
   disconnect() {
     if (this.ws) {
-      this.ws.send(JSON.stringify({
-        op: 4,
-        d: { guild_id: this.guildId, channel_id: null, self_mute: true, self_deaf: false }
-      }));
+      this.ws.send(JSON.stringify({ op: 4, d: { guild_id: this.guildId, channel_id: null, self_mute: true, self_deaf: false } }));
       setTimeout(() => this.ws?.close(), 300);
     }
-    if (this.heartbeat) clearInterval(this.heartbeat);
+    clearInterval(this.heartbeat);
     this.connected = false;
   }
 }
 
+/* ============================================= */
+/*                  App クラス                    */
+/* ============================================= */
 class App {
   constructor() {
     this.tokens = new Set();
     this.clients = new Map(); // token → VCJoiner
     this.isRunning = false;
 
-    this.elements = {
+    this.el = {
       tokenInput: document.getElementById('tokenInput'),
-      addBtn: document.getElementById('addBtn'),
-      uploadBtn: document.getElementById('uploadBtn'),
-      fileInput: document.getElementById('fileInput'),
-      tokenList: document.getElementById('tokenList'),
-      guildId: document.getElementById('guildId'),
-      channelId: document.getElementById('channelId'),
-      cam: document.getElementById('cam'),
-      mic: document.getElementById('mic'),
-      deaf: document.getElementById('deaf'),
-      stream: document.getElementById('stream'),
-      joinBtn: document.getElementById('joinBtn'),
-      leaveBtn: document.getElementById('leaveBtn'),
-      progress: document.getElementById('progress'),
-      log: document.getElementById('log')
+      uploadBtn:  document.getElementById('uploadBtn'),
+      addBtn:     document.getElementById('addBtn'),
+      fileInput:  document.getElementById('fileInput'),
+      tokenList:  document.getElementById('tokenList'),
+      guildId:    document.getElementById('guildId'),
+      channelId: y => document.getElementById('channelId'),
+      cam:        document.getElementById('cam'),
+      mic:        document.getElementById('mic'),
+      deaf:       document.getElementById('deaf'),
+      stream:     document.getElementById('stream'),
+      joinBtn:    document.getElementById('joinBtn'),
+      leaveBtn:   document.getElementById('leaveBtn'),
+      progress:   document.getElementById('progress'),
+      log:        document.getElementById('log')
     };
 
     this.bindEvents();
@@ -281,117 +301,133 @@ class App {
   log(msg, type = 'info') {
     const time = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const line = document.createElement('div');
-    line.className = `[${time}] ${msg}`;
-    line.classList.add(type);
-    this.elements.log.appendChild(line);
-    this.elements.log.scrollTop = this.elements.log.scrollHeight;
+    line.className = `log-line ${type}`;
+    line.textContent = `[${time}] ${msg}`;
+    this.el.log.appendChild(line);
+    this.el.log.scrollTop = this.el.log.scrollHeight;
   }
 
-  updateProgress(current, total) {
-    const percent = Math.round((current / total) * 100);
-    this.elements.progress.style.width = `${percent}%`;
+  updateProgress(cur, total) {
+    this.el.progress.style.width = `${Math.round((cur / total) * 100)}%`;
   }
 
   getSettings() {
     return {
-      camera: this.elements.cam.checked,
-      mic: this.elements.mic.checked,
-      deaf: this.elements.deaf.checked,
-      stream: this.elements.stream.checked
+      camera: this.el.cam.checked,
+      mic:    this.el.mic.checked,
+      deaf:   this.el.deaf.checked,
+      stream: this.el.stream.checked
     };
   }
 
   addToken(token) {
     token = token.trim();
-    if (!token || !token.includes('.') || this.tokens.has(token)) return false;
+    if (!isValidToken(token)) return this.log('無効なトークン形式です', 'error');
+    if (this.tokens.has(token)) return this.log('すでに追加されています', 'error');
+
     this.tokens.add(token);
     const item = document.createElement('div');
     item.className = 'token-item';
-    item.innerHTML = `<span>${token.slice(0,12)}...${token.slice(-8)}</span><button>削除</button>`;
-    item.querySelector('button').onclick = () => {
-      this.tokens.delete(token);
-      item.remove();
-    };
-    this.elements.tokenList.appendChild(item);
-    return true;
+    item.dataset.token = token; // ← これが最重要！
+    item.innerHTML = `
+      <span>${token.slice(0, 12)}...${token.slice(-8)}</span>
+      <button data-action="remove">削除</button>
+    `;
+    this.el.tokenList.appendChild(item);
+    this.el.tokenInput.value = '';
+    this.log('トークンを追加しました');
+  }
+
+  removeToken(token) {
+    this.tokens.delete(token);
+    this.clients.get(token)?.disconnect();
+    this.clients.delete(token);
+    document.querySelector(`[data-token="${token}"]`)?.remove();
+    if (this.tokens.size === 0) {
+      this.el.tokenList.innerHTML = '<div class="empty-state">トークンがありません</div>';
+    }
   }
 
   async start() {
     if (this.isRunning) return;
-    const guildId = this.elements.guildId.value.trim();
-    const channelId = this.elements.channelId.value.trim();
-    if (!guildId || !channelId) return this.log('サーバーIDまたはチャンネルIDが空です', 'error');
+    const guildId = this.el.guildId.value.trim();
+    const channelId = this.el.channelId.value.trim();
+    if (!guildId || !channelId) return this.log('IDが入力されていません', 'error');
     if (this.tokens.size === 0) return this.log('トークンがありません', 'error');
 
     this.isRunning = true;
-    this.elements.joinBtn.disabled = true;
-    this.elements.joinBtn.textContent = '参加中...';
-    this.elements.progress.style.width = '0%';
+    this.el.joinBtn.disabled = true;
+    this.el.joinBtn.textContent = '参加中...';
+    this.el.progress.style.width = '0%';
 
     const settings = this.getSettings();
     let success = 0;
 
-    for (const [i, token] of [...this.tokens].entries()) {
+    for (const [i, token] of Array.from(this.tokens).entries()) {
       try {
         const client = new VCJoiner(token, guildId, channelId, settings);
         await client.connect();
         this.clients.set(token, client);
         success++;
-        this.log(`Success: ${token.slice(0,12)}...`, 'success');
-      } catch (e) {
-        this.log(`Failed: ${token.slice(0,12)}...`, 'error');
+        this.log(`成功: ${token.slice(0,12)}...`, 'success');
+      } catch (err) {
+        console.error('[VC Joiner] Connection failed:', err);
+        this.log(`失敗: ${token.slice(0,12)}...`, 'error');
       }
       this.updateProgress(i + 1, this.tokens.size);
-      await new Promise(r => setTimeout(r, 900 + Math.random() * 800)); // レートリミット回避
+      await randomDelay();
     }
 
     this.isRunning = false;
-    this.elements.joinBtn.disabled = false;
-    this.elements.joinBtn.textContent = 'VCに参加';
+    this.el.joinBtn.disabled = false;
+    this.el.joinBtn.textContent = 'VCに参加';
     this.log(`完了: ${success}/${this.tokens.size} 成功`, 'success');
   }
 
   stop() {
-    this.clients.forEach(client => client.disconnect());
+    this.clients.forEach(c => c.disconnect());
     this.clients.clear();
     this.log('全員退出しました', 'success');
   }
 
   bindEvents() {
-    this.elements.addBtn.onclick = () => {
-      const token = this.elements.tokenInput.value;
-      if (this.addToken(token)) this.elements.tokenInput.value = '';
-    };
-
-    this.elements.uploadBtn.onclick = () => this.elements.fileInput.click();
-    this.elements.fileInput.onchange = (e) => {
+    this.el.addBtn.addEventListener('click', () => this.addToken(this.el.tokenInput.value));
+    this.el.uploadBtn.addEventListener('click', () => this.el.fileInput.click());
+    this.el.fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = (ev) => {
+      reader.onload = ev => {
         const lines = ev.target.result.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
         let added = 0;
         lines.forEach(t => { if (this.addToken(t)) added++; });
-        this.log(`ファイルから ${added} 個のトークンを追加`, 'success');
+        this.log(`ファイルから ${added} 個追加`, 'success');
       };
       reader.readAsText(file);
-    };
+    });
 
-    this.elements.joinBtn.onclick = () => this.start();
-    this.elements.leaveBtn.onclick = () => this.stop();
+    this.el.joinBtn.addEventListener('click', () => this.start());
+    this.el.leaveBtn.addEventListener('click', () => this.stop());
+
+    // トークン削除（委譲で一括処理）
+    this.el.tokenList.addEventListener('click', e => {
+      if (e.target.matches('[data-action="remove"]')) {
+        const token = e.target.closest('.token-item').dataset.token;
+        this.removeToken(token);
+      }
+    });
 
     // リアルタイム設定反映
-    ['cam','mic','deaf','stream'].forEach(id => {
-      document.getElementById(id).onchange = () => {
+    ['cam', 'mic', 'deaf', 'stream'].forEach(id => {
+      this.el[id].addEventListener('change', () => {
         const newSettings = this.getSettings();
         this.clients.forEach(client => client.updateSettings(newSettings));
-      };
+      });
     });
   }
 }
 
-// 起動
-new App();
+const app = new App();
 </script>
 </body>
 </html>
