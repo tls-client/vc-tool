@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VC Joiner</title>
+  <title>VC Joiner - 神仕様 2025 Ultimate</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -223,6 +223,14 @@
     .checkbox input:checked::before { transform: translateX(22px); }
     .checkbox input:checked + span { color: var(--glow-strong); }
 
+    /* 神技CSS：折り返し禁止＋完璧に揃う */
+    .checkbox span {
+      white-space: nowrap;
+      display: inline-block;
+      min-width: 68px;
+      text-align: left;
+    }
+
     button.primary {
       width: 100%;
       padding: 18px;
@@ -301,7 +309,7 @@
     <h2>VC Joiner</h2>
 
     <label>トークン（改行で複数可）</label>
-    <textarea id="tokenInput" placeholder="ここにトークンを貼り付けてください&#10;1行に1トークン&#10;新形式・旧形式どちらも対応済み"></textarea>
+    <textarea id="tokenInput" placeholder="ここにトークンを貼り付けてください&#10;1行に1トークン&#10;新形式・旧形式どちらも完全対応"></textarea>
 
     <div class="button-row">
       <button class="secondary" id="uploadBtn">ファイル読み込み</button>
@@ -321,8 +329,8 @@
 
     <div class="toggle-row">
       <label class="checkbox"><input type="checkbox" id="cam"><span>カメラ</span></label>
-      <label class="checkbox"><input type="checkbox" id="mic"><span>マイク</span></label>
-      <label class="checkbox"><input type="checkbox" id="deaf"><span>スピーカーミュート</span></label>
+      <label class="checkbox"><input type="checkbox" id="mic" checked><span>マイク</span></label>
+      <label class="checkbox"><input type="checkbox" id="hear" checked><span>音を聞く</span></label>
       <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
     </div>
 
@@ -334,7 +342,7 @@
   </div>
 
 <script>
-// 2025年現在・未来永劫対応のトークン判定（新4パート形式も完全対応）
+// 新トークン形式完全対応
 const isValidToken = (t) => {
   const token = t.trim();
   return /^[\w-]{24,}\.[\w-]{6}\.[\w-]{27,}(\.[\w-]{27,})?$/.test(token) ||
@@ -349,7 +357,7 @@ class VCJoiner {
     this.token = token.trim();
     this.guildId = guildId;
     this.channelId = channelId;
-    this.options = { camera: false, mic: true, deaf: false, stream: false, ...options };
+    this.options = { camera: false, mic: true, hear: true, stream: false, ...options };
     this.ws = null;
     this.heartbeat = null;
     this.connected = false;
@@ -376,19 +384,24 @@ class VCJoiner {
 
   _sendVoiceState() {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+
     this.ws.send(JSON.stringify({
       op: 4, d: {
         guild_id: this.guildId,
         channel_id: this.channelId,
-        self_mute: !this.options.mic,
-        self_deaf: this.options.deaf,
+        self_mute: !this.options.mic || !this.options.hear,
+        self_deaf: !this.options.hear,
         self_video: this.options.camera,
         self_stream: this.options.stream
       }
     }));
   }
 
-  updateSettings(opts) { this.options = { ...this.options, ...opts }; this._sendVoiceState(); }
+  updateSettings(opts) { 
+    this.options = { ...this.options, ...opts }; 
+    this._sendVoiceState(); 
+  }
+
   disconnect() {
     if (this.ws) {
       this.ws.send(JSON.stringify({ op: 4, d: { guild_id: this.guildId, channel_id: null, self_mute: true, self_deaf: false } }));
@@ -415,7 +428,7 @@ class App {
       channelId:  document.getElementById('channelId'),
       cam:        document.getElementById('cam'),
       mic:        document.getElementById('mic'),
-      deaf:       document.getElementById('deaf'),
+      hear:       document.getElementById('hear'),
       stream:     document.getElementById('stream'),
       joinBtn:    document.getElementById('joinBtn'),
       leaveBtn:   document.getElementById('leaveBtn'),
@@ -443,7 +456,7 @@ class App {
     return {
       camera: this.el.cam.checked,
       mic:    this.el.mic.checked,
-      deaf:   this.el.deaf.checked,
+      hear:   this.el.hear.checked,
       stream: this.el.stream.checked
     };
   }
@@ -533,7 +546,6 @@ class App {
 
   bindEvents() {
     this.el.addBtn.addEventListener('click', () => this.addTokensFromText(this.el.tokenInput.value));
-
     this.el.tokenInput.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -560,7 +572,7 @@ class App {
       }
     });
 
-    ['cam', 'mic', 'deaf', 'stream'].forEach(id => {
+    ['cam', 'mic', 'hear', 'stream'].forEach(id => {
       this.el[id].addEventListener('change', () => {
         const newSettings = this.getSettings();
         this.clients.forEach(client => client.updateSettings(newSettings));
