@@ -1,356 +1,384 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discord VC Joiner - Leaver</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>VC Joiner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #1e1e2e;
-      --card: #25253a;
-      --accent: #7289da;
-      --text: #e0e0ff;
-      --success: #42b883;
-      --danger: #e74c3c;
+      --bg: #101018;
+      --card: #20222b;
+      --accent: #5865f2;
+      --glow: #64d6ff;
+      --danger: #ff5c5c;
+      --text: #e1e3e8;
     }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #11131a; }
+    ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--glow); }
+
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Noto Sans JP', sans-serif;
-      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 35%, var(--bg) 100%);
       color: var(--text);
-      min-height: 100vh;
+      min-height: 100dvh;
       padding: 20px;
-    }
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background: var(--card);
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(114, 137, 218, 0.2);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2rem;
-      background: linear-gradient(90deg, #7289da, #a17de9);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      opacity: 0.9;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.05);
-      color: white;
-      font-size: 15px;
-      transition: all 0.3s;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    input[type="text"]:focus {
-      outline: none;
-      background: rgba(114,137,218,0.15);
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(114,137,218,0.2);
-    }
-    .btn-group {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
     }
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      flex: 1;
-      min-width: 120px;
+    .card {
+      background: var(--card);
+      padding: 36px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.7);
+      width: 100%;
+      max-width: 620px;
+      animation: fadeIn .8s ease;
     }
-    .btn-primary {
-      background: var(--accent);
-      color: white;
+    @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } }
+
+    h2 { color: var(--glow); text-align: center; margin-bottom: 28px; font-size: 28px; font-weight: 700; }
+
+    label { display:block; margin-top:18px; font-size:14px; color:var(--glow); font-weight:600; }
+    input[type=text] {
+      width:100%; padding:12px; margin-top:6px;
+      background:#15161b; border:none; border-radius:10px; color:#fff;
+      font-family:'Courier New',monospace; font-size:14px;
     }
-    .btn-primary:hover { background: #677bc4; transform: translateY(-2px); }
-    .btn-success { background: var(--success); }
-    .btn-danger { background: var(--danger); }
-    .btn-secondary {
-      background: rgba(255,255,255,0.1);
-      color: white;
+    input:focus { outline:none; box-shadow:0 0 0 3px rgba(100,214,255,.4); }
+
+    .row { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
+    button.secondary {
+      padding:10px 18px; background:#2c2f38; color:var(--glow);
+      border:1px solid var(--glow); border-radius:10px; cursor:pointer;
+      transition:all .3s;
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+    button.secondary:hover { background:var(--glow); color:#000; }
 
     .token-list {
-      margin: 20px 0;
-      max-height: 200px;
-      overflow-y: auto;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.2);
-      padding: 10px;
+      margin-top:12px; max-height:180px; overflow-y:auto;
+      background:#15161b; border-radius:10px; padding:10px;
+      border:1px solid rgba(100,214,255,.2);
     }
     .token-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-family: monospace;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:8px 12px; background:rgba(100,214,255,.05);
+      border-radius:8px; margin-bottom:6px; font-family:monospace; font-size:13px;
     }
     .token-item button {
-      padding: 6px 12px;
-      font-size: 12px;
+      background:var(--danger); color:#fff; border:none;
+      padding:4px 10px; border-radius:6px; font-size:12px; cursor:pointer;
     }
 
-    .settings {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin: 25px 0;
+    .toggle-row {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+      gap:16px; margin:28px 0;
     }
-    .toggle {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 15px;
+    .checkbox {
+      display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
     }
-    .switch {
-      position: relative;
-      width: 48px;
-      height: 26px;
-      background: #444;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: 0.3s;
+    .checkbox input {
+      appearance:none; width:40px; height:20px;
+      background:#2a2c32; border-radius:20px; position:relative;
+      transition:background .3s;
     }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      top: 3px; left: 3px;
-      width: 20px; height: 20px;
-      background: white;
-      border-radius: 50%;
-      transition: 0.3s;
+    .checkbox input::before {
+      content:''; position:absolute; width:16px; height:16px;
+      background:#fff; border-radius:50%; top:2px; left:2px;
+      transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);
     }
-    input:checked + .switch { background: var(--accent); }
-    input:checked + .switch .slider { transform: translateX(22px); }
+    .checkbox input:checked { background:var(--glow); }
+    .checkbox input:checked::before { transform:translateX(20px); }
+    .checkbox span { transition:color .3s; }
+    .checkbox input:checked + span { color:var(--glow); }
 
-    .notification {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: 500;
-      animation: fade 3s forwards;
+    button.primary {
+      width:100%; padding:16px; margin-top:24px;
+      border:none; border-radius:14px; font-weight:700; font-size:18px;
+      color:#fff; cursor:pointer; transition:all .3s;
+      position:relative; overflow:hidden;
     }
-    .success { background: var(--success); }
-    .error { background: var(--danger); }
+    #joinBtn { background:linear-gradient(135deg,#5865f2,var(--glow)); }
+    #leaveBtn { background:linear-gradient(135deg,#ff5c5c,#c42b4e); margin-top:12px; }
+    button.primary:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(100,214,255,.6); }
+    button.primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
 
-    @keyframes fade {
-      0%, 100% { opacity: 0; transform: translateY(-10px); }
-      15%, 85% { opacity: 1; transform: translateY(0); }
-    }
+    .progress { margin-top:12px; height:6px; background:#15161b; border-radius:3px; overflow:hidden; }
+    .progress-bar { height:100%; width:0%; background:var(--glow); transition:width .4s; }
 
-    .warning {
-      background: rgba(231, 76, 60, 0.2);
-      border: 1px solid #e74c3c;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      font-size: 14px;
+    .log {
+      margin-top:20px; max-height:200px; overflow-y:auto;
+      background:#15161b; border-radius:10px; padding:12px;
+      font-family:monospace; font-size:13px; line-height:1.5;
     }
+    .log .success { color:var(--glow); }
+    .log .error { color:#ff6b6b; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>VC Joiner - Leaver</h1>
-    <div class="form-group">
-      <label>Token</label>
-      <input type="text" id="token" placeholder="トークンを入力">
-      <div class="btn-group">
-        <button class="btn-primary" onclick="addToken()">追加</button>
-        <button class="btn-secondary" onclick="document.getElementById('tokenFile').click()">
-          ファイルから読み込み
-        </button>
-        <input type="file" id="tokenFile" style="display:none" onchange="uploadTokens(this)">
-      </div>
+  <div class="card">
+    <h2>VC Joiner</h2>
+
+    <label>トークン</label>
+    <input type="text" id="tokenInput" placeholder="トークンを入力">
+    <div class="row">
+      <button class="secondary" id="addBtn">追加</button>
+      <button class="secondary" id="uploadBtn">ファイル読み込み</button>
+      <input type="file" id="fileInput" style="display:none">
     </div>
 
-    <div class="token-list" id="tokenList"></div>
-
-    <div class="form-group">
-      <label>Guild ID</label>
-      <input type="text" id="guildId" placeholder="123456789">
+    <div class="token-list" id="tokenList">
+      <div style="text-align:center;color:#666;padding:20px">トークンがありません</div>
     </div>
 
-    <div class="form-group">
-      <label>Voice Channel ID</label>
-      <input type="text" id="vcChannelId" placeholder="987654321">
+    <label>サーバーID</label>
+    <input type="text" id="guildId">
+
+    <label>ボイスチャンネルID</label>
+    <input type="text" id="channelId">
+
+    <div class="toggle-row">
+      <label class="checkbox"><input type="checkbox" id="cam"><span>カメラ</span></label>
+      <label class="checkbox"><input type="checkbox" id="mic" checked><span>マイク</span></label>
+      <label class="checkbox"><input type="checkbox" id="deaf"><span>スピーカーミュート</span></label>
+      <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
     </div>
 
-    <div class="settings">
-      <label class="toggle">
-        <input type="checkbox" id="cameraToggle">
-        <div class="switch"><span class="slider"></span></div>
-        Camera
-      </label>
-      <label class="toggle">
-        <input type="checkbox" id="micToggle">
-        <div class="switch"><span class="slider"></span></div>
-        Mic
-      </label>
-      <label class="toggle">
-        <input type="checkbox" id="deafenToggle">
-        <div class="switch"><span class="slider"></span></div>
-        Speaker Mute
-      </label>
-      <label class="toggle">
-        <input type="checkbox" id="streamToggle">
-        <div class="switch"><span class="slider"></span></div>
-        Stream
-      </label>
-    </div>
+    <button class="primary" id="joinBtn">VCに参加</button>
+    <button class="primary" id="leaveBtn">VCから退出</button>
 
-    <div class="btn-group">
-      <button class="btn-success" onclick="startRaid()" id="raidButton">Join VC</button>
-      <button class="btn-danger" onclick="stopRaid()">Leave VC</button>
-    </div>
-
-    <div id="notification"></div>
+    <div class="progress"><div class="progress-bar" id="progress"></div></div>
+    <div class="log" id="log"></div>
   </div>
 
-  <script>
-    const WS_URL = 'wss://gateway.discord.gg/?v=9&encoding=json';
-    let tokens = [], activeJoiners = [];
+<script>
+class VCJoiner {
+  constructor(token, guildId, channelId, options = {}) {
+    this.token = token.trim();
+    this.guildId = guildId;
+    this.channelId = channelId;
+    this.options = { camera: false, mic: true, deaf: false, stream: false, ...options };
+    this.ws = null;
+    this.heartbeat = null;
+    this.connected = false;
+  }
 
-    class VCJoiner {
-      constructor(token, guildId, channelId, settings) {
-        this.token = token; this.guildId = guildId; this.channelId = channelId;
-        this.settings = settings; this.ws = null; this.heartbeat = null;
-      }
-      async connect() {
-        return new Promise((resolve, reject) => {
-          this.ws = new WebSocket(WS_URL);
-          this.ws.onmessage = ({data}) => {
-            const p = JSON.parse(data);
-            if (p.op === 10) {
-              this.heartbeat = setInterval(() => {
-                this.ws.send(JSON.stringify({op: 1, d: null}));
-              }, p.d.heartbeat_interval);
-              this.ws.send(JSON.stringify({op: 2, d: {token: this.token, properties: {$os:"Windows",$browser:"Chrome",$device:""}} }));
-              this.ws.send(JSON.stringify({op: 4, d: {
+  async connect() {
+    return new Promise((resolve, reject) => {
+      this.ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
+
+      const timeout = setTimeout(() => reject(new Error('Timeout')), 15000);
+
+      this.ws.onmessage = (e) => {
+        const p = JSON.parse(e.data);
+
+        if (p.op === 10) { // Hello
+          clearTimeout(timeout);
+          this.heartbeat = setInterval(() => this.ws?.send(JSON.stringify({ op: 1, d: null })), p.d.heartbeat_interval);
+
+          this.ws.send(JSON.stringify({
+            op: 2,
+            d: { token: this.token, properties: { $os: "Windows", $browser: "Chrome", $device: "pc" }, intents: 0 }
+          }));
+
+          setTimeout(() => {
+            this.ws.send(JSON.stringify({
+              op: 4,
+              d: {
                 guild_id: this.guildId,
                 channel_id: this.channelId,
-                self_mute: !this.settings.mic,
-                self_deaf: this.settings.deafen,
-                self_video: this.settings.camera,
-                self_stream: this.settings.stream || false
-              }}));
-              resolve();
-            }
-          };
-          this.ws.onerror = () => reject();
-        });
-      }
-      disconnect() {
-        if (this.ws) {
-          this.ws.send(JSON.stringify({op: 4, d: {guild_id: this.guildId, channel_id: null, self_mute: true, self_deaf: false}}));
-          this.ws.close();
+                self_mute: !this.options.mic,
+                self_deaf: this.options.deaf,
+                self_video: this.options.camera,
+                self_stream: this.options.stream
+              }
+            }));
+            this.connected = true;
+            resolve();
+          }, 1500);
         }
-        clearInterval(this.heartbeat);
+      };
+
+      this.ws.onerror = () => reject(new Error('WebSocket error'));
+      this.ws.onclose = () => this.connected = false;
+    });
+  }
+
+  updateSettings(options) {
+    this.options = { ...this.options, ...options };
+    if (this.connected && this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({
+        op: 4,
+        d: {
+          guild_id: this.guildId,
+          channel_id: this.channelId,
+          self_mute: !this.options.mic,
+          self_deaf: this.options.deaf,
+          self_video: this.options.camera,
+          self_stream: this.options.stream
+        }
+      }));
+    }
+  }
+
+  disconnect() {
+    if (this.ws) {
+      this.ws.send(JSON.stringify({
+        op: 4,
+        d: { guild_id: this.guildId, channel_id: null, self_mute: true, self_deaf: false }
+      }));
+      setTimeout(() => this.ws?.close(), 300);
+    }
+    if (this.heartbeat) clearInterval(this.heartbeat);
+    this.connected = false;
+  }
+}
+
+class App {
+  constructor() {
+    this.tokens = new Set();
+    this.clients = new Map(); // token → VCJoiner
+    this.isRunning = false;
+
+    this.elements = {
+      tokenInput: document.getElementById('tokenInput'),
+      addBtn: document.getElementById('addBtn'),
+      uploadBtn: document.getElementById('uploadBtn'),
+      fileInput: document.getElementById('fileInput'),
+      tokenList: document.getElementById('tokenList'),
+      guildId: document.getElementById('guildId'),
+      channelId: document.getElementById('channelId'),
+      cam: document.getElementById('cam'),
+      mic: document.getElementById('mic'),
+      deaf: document.getElementById('deaf'),
+      stream: document.getElementById('stream'),
+      joinBtn: document.getElementById('joinBtn'),
+      leaveBtn: document.getElementById('leaveBtn'),
+      progress: document.getElementById('progress'),
+      log: document.getElementById('log')
+    };
+
+    this.bindEvents();
+  }
+
+  log(msg, type = 'info') {
+    const time = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const line = document.createElement('div');
+    line.className = `[${time}] ${msg}`;
+    line.classList.add(type);
+    this.elements.log.appendChild(line);
+    this.elements.log.scrollTop = this.elements.log.scrollHeight;
+  }
+
+  updateProgress(current, total) {
+    const percent = Math.round((current / total) * 100);
+    this.elements.progress.style.width = `${percent}%`;
+  }
+
+  getSettings() {
+    return {
+      camera: this.elements.cam.checked,
+      mic: this.elements.mic.checked,
+      deaf: this.elements.deaf.checked,
+      stream: this.elements.stream.checked
+    };
+  }
+
+  addToken(token) {
+    token = token.trim();
+    if (!token || !token.includes('.') || this.tokens.has(token)) return false;
+    this.tokens.add(token);
+    const item = document.createElement('div');
+    item.className = 'token-item';
+    item.innerHTML = `<span>${token.slice(0,12)}...${token.slice(-8)}</span><button>削除</button>`;
+    item.querySelector('button').onclick = () => {
+      this.tokens.delete(token);
+      item.remove();
+    };
+    this.elements.tokenList.appendChild(item);
+    return true;
+  }
+
+  async start() {
+    if (this.isRunning) return;
+    const guildId = this.elements.guildId.value.trim();
+    const channelId = this.elements.channelId.value.trim();
+    if (!guildId || !channelId) return this.log('サーバーIDまたはチャンネルIDが空です', 'error');
+    if (this.tokens.size === 0) return this.log('トークンがありません', 'error');
+
+    this.isRunning = true;
+    this.elements.joinBtn.disabled = true;
+    this.elements.joinBtn.textContent = '参加中...';
+    this.elements.progress.style.width = '0%';
+
+    const settings = this.getSettings();
+    let success = 0;
+
+    for (const [i, token] of [...this.tokens].entries()) {
+      try {
+        const client = new VCJoiner(token, guildId, channelId, settings);
+        await client.connect();
+        this.clients.set(token, client);
+        success++;
+        this.log(`Success: ${token.slice(0,12)}...`, 'success');
+      } catch (e) {
+        this.log(`Failed: ${token.slice(0,12)}...`, 'error');
       }
+      this.updateProgress(i + 1, this.tokens.size);
+      await new Promise(r => setTimeout(r, 900 + Math.random() * 800)); // レートリミット回避
     }
 
-    function addToken() {
-      const t = document.getElementById("token").value.trim();
-      if (!t || !t.includes(".")) return showNotif("無効なトークンです", "error");
-      if (tokens.includes(t)) return showNotif("すでに追加済み", "error");
-      tokens.push(t); updateList(); document.getElementById("token").value = "";
-      showNotif("トークンを追加しました");
-    }
+    this.isRunning = false;
+    this.elements.joinBtn.disabled = false;
+    this.elements.joinBtn.textContent = 'VCに参加';
+    this.log(`完了: ${success}/${this.tokens.size} 成功`, 'success');
+  }
 
-    function uploadTokens(e) {
-      const file = e.files[0];
+  stop() {
+    this.clients.forEach(client => client.disconnect());
+    this.clients.clear();
+    this.log('全員退出しました', 'success');
+  }
+
+  bindEvents() {
+    this.elements.addBtn.onclick = () => {
+      const token = this.elements.tokenInput.value;
+      if (this.addToken(token)) this.elements.tokenInput.value = '';
+    };
+
+    this.elements.uploadBtn.onclick = () => this.elements.fileInput.click();
+    this.elements.fileInput.onchange = (e) => {
+      const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = ev => {
-        const added = ev.target.result.split("\n").map(l=>l.trim()).filter(l=>l && l.includes(".") && !tokens.includes(l));
-        tokens.push(...added);
-        updateList();
-        showNotif(`${added.length}個のトークンを追加しました`);
+      reader.onload = (ev) => {
+        const lines = ev.target.result.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        let added = 0;
+        lines.forEach(t => { if (this.addToken(t)) added++; });
+        this.log(`ファイルから ${added} 個のトークンを追加`, 'success');
       };
       reader.readAsText(file);
-    }
+    };
 
-    function removeToken(t) {
-      tokens = tokens.filter(x => x !== t);
-      updateList();
-    }
+    this.elements.joinBtn.onclick = () => this.start();
+    this.elements.leaveBtn.onclick = () => this.stop();
 
-    function updateList() {
-      document.getElementById("tokenList").innerHTML = tokens.map(t => `
-        <div class="token-item">
-          <span>${t.slice(0,10)}...${t.slice(-8)}</span>
-          <button class="btn-danger" onclick="removeToken('${t}')">削除</button>
-        </div>
-      `).join("") || "<div style='text-align:center;opacity:0.5;padding:20px'>トークンがありません</div>";
-    }
-
-    function showNotif(msg, type="success") {
-      const n = document.getElementById("notification");
-      n.textContent = msg;
-      n.className = `notification ${type}`;
-    }
-
-    function getSettings() {
-      return {
-        camera: document.getElementById("cameraToggle").checked,
-        mic: document.getElementById("micToggle").checked,
-        deafen: document.getElementById("deafenToggle").checked,
-        stream: document.getElementById("streamToggle").checked
+    // リアルタイム設定反映
+    ['cam','mic','deaf','stream'].forEach(id => {
+      document.getElementById(id).onchange = () => {
+        const newSettings = this.getSettings();
+        this.clients.forEach(client => client.updateSettings(newSettings));
       };
-    }
+    });
+  }
+}
 
-    async function startRaid() {
-      const guild = document.getElementById("guildId").value.trim();
-      const channel = document.getElementById("vcChannelId").value.trim();
-      if (!guild || !channel) return showNotif("サーバーIDかVC IDが空です", "error");
-      if (tokens.length === 0) return showNotif("トークンがありません", "error");
-
-      document.getElementById("raidButton").disabled = true;
-      document.getElementById("raidButton").textContent = "参加中...";
-
-      for (const token of tokens) {
-        const j = new VCJoiner(token, guild, channel, getSettings());
-        activeJoiners.push(j);
-        try { await j.connect(); } catch {}
-      }
-
-      document.getElementById("raidButton").disabled = false;
-      document.getElementById("raidButton").textContent = "全員でVCに参加";
-      showNotif(`${tokens.length}アカウントで参加を試みました`);
-    }
-
-    function stopRaid() {
-      activeJoiners.forEach(j => j.disconnect());
-      activeJoiners = [];
-      showNotif("全員退出しました");
-    }
-  </script>
+// 起動
+new App();
+</script>
 </body>
 </html>
