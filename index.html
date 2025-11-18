@@ -170,7 +170,7 @@
     <h2>VC Joiner</h2>
 
     <label>トークン</label>
-    <input type="text" id="tokenInput" placeholder="例: MzEyNDU2Nzg5MDEyMzQ1Njc4.Gabcde.1234567890abcdef">
+    <input type="text" id="tokenInput" placeholder="改行で複数可">
 
     <div class="button-row">
       <button class="secondary" id="uploadBtn">ファイル読み込み</button>
@@ -182,7 +182,7 @@
       <div class="empty-state">トークンがありません</div>
     </div>
 
-    <label>サーバーID (Guild ID)</label>
+    <label>サーバーID</label>
     <input type="text" id="guildId" placeholder="例: 123456789012345678">
 
     <label>ボイスチャンネルID</label>
@@ -191,12 +191,12 @@
     <div class="toggle-row">
       <label class="checkbox"><input type="checkbox" id="cam"><span>カメラ</span></label>
       <label class="checkbox"><input type="checkbox" id="mic" checked><span>マイク</span></label>
-      <label class="checkbox"><input type="checkbox" id="deaf"><span>聴こえない</span></label>
+      <label class="checkbox"><input type="checkbox" id="deaf"><span>スピーカーミュート</span></label>
       <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
     </div>
 
-    <button class="primary" id="joinBtn">VCに参加</button>
-    <button class="primary" id="leaveBtn">全員退出</button>
+    <button class="primary" id="joinBtn">VC Join</button>
+    <button class="primary" id="leaveBtn">VC Leave</button>
 
     <div class="progress"><div class="progress-bar" id="progress"></div></div>
     <div class="log" id="log"></div>
