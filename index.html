@@ -123,7 +123,7 @@
   <div class="card">
     <h2>VC Joiner</h2>
 
-    <label>トークン</label>
+    <label>Token:</label>
     <input type="text" id="tokenInput" placeholder="トークンを入力">
     <div class="row">
       <button class="secondary" id="addBtn">追加</button>
@@ -135,21 +135,21 @@
       <div style="text-align:center;color:#666;padding:20px">トークンがありません</div>
     </div>
 
-    <label>サーバーID</label>
+    <label>Guild ID</label>
     <input type="text" id="guildId">
 
-    <label>ボイスチャンネルID</label>
+    <label>Voice Channel ID</label>
     <input type="text" id="channelId">
 
     <div class="toggle-row">
-      <label class="checkbox"><input type="checkbox" id="cam"><span>カメラ</span></label>
-      <label class="checkbox"><input type="checkbox" id="mic" checked><span>マイク</span></label>
-      <label class="checkbox"><input type="checkbox" id="deaf"><span>スピーカーミュート</span></label>
-      <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
+      <label class="checkbox"><input type="checkbox" id="cam"><span>Camera</span></label>
+      <label class="checkbox"><input type="checkbox" id="mic"><span>Mic</span></label>
+      <label class="checkbox"><input type="checkbox" id="deaf"><span>Speaker Mute</span></label>
+      <label class="checkbox"><input type="checkbox" id="stream"><span>Stream</span></label>
     </div>
 
-    <button class="primary" id="joinBtn">VCに参加</button>
-    <button class="primary" id="leaveBtn">VCから退出</button>
+    <button class="primary" id="joinBtn">VC Join</button>
+    <button class="primary" id="leaveBtn">VC Leave</button>
 
     <div class="progress"><div class="progress-bar" id="progress"></div></div>
     <div class="log" id="log"></div>
