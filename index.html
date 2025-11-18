@@ -4,165 +4,295 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VC Joiner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #101018;
-      --card: #20222b;
+      --bg: #0d0e15;
+      --card: #14151e;
+      --card-glass: rgba(20, 21, 30, 0.65);
       --accent: #5865f2;
       --glow: #64d6ff;
+      --glow-strong: #80e8ff;
       --danger: #ff5c5c;
-      --text: #e1e3e8;
-      --text-muted: #666;
-      --border: rgba(100,214,255,.2);
+      --text: #e8eaed;
+      --text-muted: #9ba1b0;
+      --border: rgba(100, 214, 255, 0.15);
+      --shadow: 0 8px 32px rgba(0,0,0,0.6);
+      --radius: 20px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 35%, var(--bg) 100%);
+      background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 40%, var(--bg) 100%);
       color: var(--text);
       min-height: 100dvh;
       padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
+      backdrop-filter: blur(10px);
     }
 
     .card {
-      background: var(--card);
-      padding: 36px;
-      border-radius: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.7);
+      background: var(--card-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), 0 0 60px rgba(88, 101, 242, 0.15);
       width: 100%;
-      max-width: 620px;
-      animation: fadeIn .8s ease-out;
+      max-width: 640px;
+      animation: floatIn .9s ease-out;
+      position: relative;
+      overflow: hidden;
     }
 
-    @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--glow), transparent);
+      animation: shimmer 4s infinite;
+    }
 
-    h2 { color: var(--glow); text-align: center; margin-bottom: 28px; font-size: 28px; font-weight: 700; }
+    @keyframes floatIn {
+      from { opacity:0; transform: translateY(40px) scale(0.96); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+    @keyframes shimmer { 0%,100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
 
-    label { display:block; margin-top:18px; font-size:14px; color:var(--glow); font-weight:600; }
+    h2 {
+      color: var(--glow-strong);
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 20px rgba(100,214,255,0.5);
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--glow);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
 
     input[type="text"] {
-      width:100%; padding:12px 14px; margin-top:6px;
-      background:#15161b; border:none; border-radius:10px; color:#fff;
-      font-family:'Courier New',monospace; font-size:14px;
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 8px;
+      background: rgba(21,22,27,0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
     }
-    input:focus { outline:none; box-shadow:0 0 0 3px rgba(100,214,255,.4); }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--glow);
+      box-shadow: 0 0 0 4px rgba(100,214,255,0.2), 0 8px 25px rgba(100,214,255,0.15);
+      background: rgba(21,22,27,0.9);
+    }
 
     .button-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 14px;
       margin-top: 10px;
     }
 
     button.secondary {
-      padding: 11px 16px;
-      background: #2c2f38;
+      padding: 13px 20px;
+      background: rgba(88,101,242,0.15);
       color: var(--glow);
-      border: 1px solid var(--glow);
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
+      border: 1px solid rgba(100,214,255,0.3);
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 14.5px;
       cursor: pointer;
-      transition: all .25s ease;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
     }
-    button.secondary:hover { background: var(--glow); color: #000; }
+    button.secondary:hover {
+      background: var(--glow);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(100,214,255,0.3);
+    }
 
     .hidden-input { display: none; }
 
     .token-list {
-      margin-top: 12px;
-      max-height: 180px;
+      margin-top: 14px;
+      max-height: 200px;
       overflow-y: auto;
-      background: #15161b;
-      border-radius: 10px;
-      padding: 10px;
+      background: rgba(21,22,27,0.5);
       border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      backdrop-filter: blur(10px);
     }
 
     .token-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 12px;
-      background: rgba(100,214,255,.05);
-      border-radius: 8px;
-      margin-bottom: 6px;
+      padding: 12px 16px;
+      background: rgba(100,214,255,0.08);
+      border-radius: 12px;
+      margin-bottom: 8px;
       font-family: 'Courier New', monospace;
-      font-size: 13px;
+      font-size: 13.5px;
+      border: 1px solid transparent;
+      transition: var(--transition);
+    }
+    .token-item:hover {
+      border-color: var(--glow);
+      transform: translateX(4px);
     }
 
     .token-item button {
       background: var(--danger);
       color: #fff;
       border: none;
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
       font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
+      transition: var(--transition);
     }
+    .token-item button:hover { background: #ff6b6b; transform: scale(1.05); }
 
     .empty-state {
       text-align: center;
       color: var(--text-muted);
-      padding: 24px;
-      font-size: 14px;
+      padding: 32px 16px;
+      font-size: 15px;
+      font-weight: 500;
     }
 
     .toggle-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 16px;
-      margin: 28px 0;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 18px;
+      margin: 32px 0;
     }
 
     .checkbox {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       cursor: pointer;
       user-select: none;
-      font-size: 14.5px;
+      font-size: 15px;
+      font-weight: 500;
     }
     .checkbox input {
       appearance: none;
-      width: 40px; height: 20px;
-      background: #2a2c32; border-radius: 20px; position: relative;
-      transition: background .3s ease;
+      width: 48px; height: 26px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50px;
+      position: relative;
+      transition: var(--transition);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
     }
     .checkbox input::before {
       content: ''; position: absolute;
-      width: 16px; height: 16px; background: #fff; border-radius: 50%;
-      top: 2px; left: 2px;
-      transition: transform .3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      width: 20px; height: 20px;
+      background: linear-gradient(135deg, #fff, #f0f0f0);
+      border-radius: 50%;
+      top: 3px; left: 3px;
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
-    .checkbox input:checked { background: var(--glow); }
-    .checkbox input:checked::before { transform: translateX(20px); }
-    .checkbox input:checked + span { color: var(--glow); }
+    .checkbox input:checked {
+      background: linear-gradient(135deg, var(--accent), var(--glow));
+    }
+    .checkbox input:checked::before {
+      transform: translateX(22px);
+    }
+    .checkbox input:checked + span { color: var(--glow-strong); }
 
     button.primary {
-      width: 100%; padding: 16px; margin-top: 24px;
-      border: none; border-radius: 14px; font-weight: 700; font-size: 18px;
-      color: #fff; cursor: pointer; transition: all .3s ease;
+      width: 100%;
+      padding: 18px;
+      margin-top: 28px;
+      border: none;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
-    #joinBtn  { background: linear-gradient(135deg, #5865f2, var(--glow)); }
-    #leaveBtn { background: linear-gradient(135deg, #ff5c5c, #c42b4e); margin-top: 12px; }
+    #joinBtn  { background: linear-gradient(135deg, #5865f2, #64d6ff); }
+    #leaveBtn { background: linear-gradient(135deg, #ff5c5c, #ff2e5e); margin-top: 14px; }
 
-    button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(100,214,255,.5); }
-    button.primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    button.primary::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: var(--transition);
+    }
+    button.primary:hover::before { left: 100%; }
+    button.primary:hover:not(:disabled) {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(88,101,242,0.5);
+    }
 
-    .progress { margin-top: 16px; height: 6px; background: #15161b; border-radius: 3px; overflow: hidden; }
-    .progress-bar { height: 100%; width: 0%; background: var(--glow); transition: width .4s ease; }
+    .progress {
+      margin-top: 20px;
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--glow));
+      border-radius: 4px;
+      transition: width .6s ease;
+      box-shadow: 0 0 20px rgba(100,214,255,0.6);
+    }
 
-    .log { margin-top: 20px; max-height: 200px; overflow-y: auto; background: #15161b; border-radius: 10px; padding: 12px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; }
-    .log-line { margin-bottom: 4px; }
-    .log-line.success { color: var(--glow); }
-    .log-line.error   { color: #ff6b6b; }
+    .log {
+      margin-top: 24px;
+      max-height: 220px;
+      overflow-y: auto;
+      background: rgba(21,22,27,0.5);
+      border-radius: 16px;
+      padding: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+    }
+    .log-line { margin-bottom: 6px; }
+    .log-line.success { color: var(--glow-strong); }
+    .log-line.error   { color: #ff6b9d; }
     .log-line.info    { color: #aaa; }
+
+    @media (max-width: 480px) {
+      .card { padding: 28px 24px; }
+      h2 { font-size: 28px; }
+      .button-row { grid-template-columns: 1fr; }
+      .toggle-row { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -179,7 +309,7 @@
     <input type="file" id="fileInput" class="hidden-input" accept=".txt">
 
     <div class="token-list" id="tokenList">
-      <div class="empty-state">トークンがありません</div>
+      <div class="empty-state">トークンを追加してください</div>
     </div>
 
     <label>サーバーID</label>
@@ -195,8 +325,8 @@
       <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
     </div>
 
-    <button class="primary" id="joinBtn">VC Join</button>
-    <button class="primary" id="leaveBtn">VC Leave</button>
+    <button class="primary" id="joinBtn">VCに参加</button>
+    <button class="primary" id="leaveBtn">全員退出</button>
 
     <div class="progress"><div class="progress-bar" id="progress"></div></div>
     <div class="log" id="log"></div>
@@ -213,7 +343,7 @@ const randomDelay = (base = 900, variation = 800) => delay(base + Math.random() 
 /* ============================================= */
 /*               VCJoiner クラス                  */
 /* ============================================= */
-class VCJoiner { /* ← 変更なし（完璧だったため） */ 
+class VCJoiner {
   constructor(token, guildId, channelId, options = {}) {
     this.token = token.trim();
     this.guildId = guildId;
@@ -274,7 +404,7 @@ class VCJoiner { /* ← 変更なし（完璧だったため） */
 class App {
   constructor() {
     this.tokens = new Set();
-    this.clients = new Map(); // token → VCJoiner
+    this.clients = new Map();
     this.isRunning = false;
 
     this.el = {
@@ -284,7 +414,7 @@ class App {
       fileInput:  document.getElementById('fileInput'),
       tokenList:  document.getElementById('tokenList'),
       guildId:    document.getElementById('guildId'),
-      channelId: y => document.getElementById('channelId'),
+      channelId:  document.getElementById('channelId'),
       cam:        document.getElementById('cam'),
       mic:        document.getElementById('mic'),
       deaf:       document.getElementById('deaf'),
@@ -328,7 +458,7 @@ class App {
     this.tokens.add(token);
     const item = document.createElement('div');
     item.className = 'token-item';
-    item.dataset.token = token; // ← これが最重要！
+    item.dataset.token = token;
     item.innerHTML = `
       <span>${token.slice(0, 12)}...${token.slice(-8)}</span>
       <button data-action="remove">削除</button>
@@ -344,7 +474,7 @@ class App {
     this.clients.delete(token);
     document.querySelector(`[data-token="${token}"]`)?.remove();
     if (this.tokens.size === 0) {
-      this.el.tokenList.innerHTML = '<div class="empty-state">トークンがありません</div>';
+      this.el.tokenList.innerHTML = '<div class="empty-state">トークンを追加してください</div>';
     }
   }
 
@@ -409,7 +539,6 @@ class App {
     this.el.joinBtn.addEventListener('click', () => this.start());
     this.el.leaveBtn.addEventListener('click', () => this.stop());
 
-    // トークン削除（委譲で一括処理）
     this.el.tokenList.addEventListener('click', e => {
       if (e.target.matches('[data-action="remove"]')) {
         const token = e.target.closest('.token-item').dataset.token;
@@ -417,7 +546,6 @@ class App {
       }
     });
 
-    // リアルタイム設定反映
     ['cam', 'mic', 'deaf', 'stream'].forEach(id => {
       this.el[id].addEventListener('change', () => {
         const newSettings = this.getSettings();
