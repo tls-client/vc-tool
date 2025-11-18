@@ -57,10 +57,7 @@
       animation: shimmer 4s infinite;
     }
 
-    @keyframes floatIn {
-      from { opacity:0; transform: translateY(40px) scale(0.96); }
-      to   { opacity:1; transform: translateY(0) scale(1); }
-    }
+    @keyframes floatIn { from { opacity:0; transform: translateY(40px) scale(0.96); } }
     @keyframes shimmer { 0%,100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
 
     h2 {
@@ -82,7 +79,7 @@
       letter-spacing: 0.5px;
     }
 
-    input[type="text"] {
+    textarea#tokenInput {
       width: 100%;
       padding: 14px 16px;
       margin-top: 8px;
@@ -92,10 +89,12 @@
       color: #fff;
       font-family: 'Courier New', monospace;
       font-size: 15px;
+      resize: vertical;
+      min-height: 120px;
       transition: var(--transition);
       backdrop-filter: blur(10px);
     }
-    input[type="text"]:focus {
+    textarea#tokenInput:focus {
       outline: none;
       border-color: var(--glow);
       box-shadow: 0 0 0 4px rgba(100,214,255,0.2), 0 8px 25px rgba(100,214,255,0.15);
@@ -299,12 +298,12 @@
   <div class="card">
     <h2>VC Joiner</h2>
 
-    <label>トークン</label>
-    <input type="text" id="tokenInput" placeholder="改行で複数可">
+    <label>トークン（改行で複数可）</label>
+    <textarea id="tokenInput" placeholder="ここにトークンを貼り付けてください&#10;1行に1トークン&#10;最大1000個まで対応"></textarea>
 
     <div class="button-row">
       <button class="secondary" id="uploadBtn">ファイル読み込み</button>
-      <button class="secondary" id="addBtn">追加</button>
+      <button class="secondary" id="addBtn">追加する</button>
     </div>
     <input type="file" id="fileInput" class="hidden-input" accept=".txt">
 
@@ -320,7 +319,7 @@
 
     <div class="toggle-row">
       <label class="checkbox"><input type="checkbox" id="cam"><span>カメラ</span></label>
-      <label class="checkbox"><input type="checkbox" id="mic"><span>マイク</span></label>
+      <label class="checkbox"><input type="checkbox" id="mic" checked><span>マイク</span></label>
       <label class="checkbox"><input type="checkbox" id="deaf"><span>スピーカーミュート</span></label>
       <label class="checkbox"><input type="checkbox" id="stream"><span>配信</span></label>
     </div>
@@ -450,22 +449,36 @@ class App {
     };
   }
 
-  addToken(token) {
-    token = token.trim();
-    if (!isValidToken(token)) return this.log('無効なトークン形式です', 'error');
-    if (this.tokens.has(token)) return this.log('すでに追加されています', 'error');
+  // るーしー仕様：複数トークン一括追加（神機能）
+  addTokensFromText(inputValue) {
+    if (!inputValue.trim()) return 0;
+    const lines = inputValue.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    let addedCount = 0;
 
-    this.tokens.add(token);
-    const item = document.createElement('div');
-    item.className = 'token-item';
-    item.dataset.token = token;
-    item.innerHTML = `
-      <span>${token.slice(0, 12)}...${token.slice(-8)}</span>
-      <button data-action="remove">削除</button>
-    `;
-    this.el.tokenList.appendChild(item);
-    this.el.tokenInput.value = '';
-    this.log('トークンを追加しました');
+    lines.forEach(token => {
+      if (!isValidToken(token)) {
+        this.log(`無効なトークン: ${token.slice(0,12)}...`, 'error');
+        return;
+      }
+      if (this.tokens.has(token)) {
+        this.log(`重複スキップ: ${token.slice(0,12)}...`, 'info');
+        return;
+      }
+
+      this.tokens.add(token);
+      const item = document.createElement('div');
+      item.className = 'token-item';
+      item.dataset.token = token;
+      item.innerHTML = `<span>${token.slice(0, 12)}...${token.slice(-8)}</span><button data-action="remove">削除</button>`;
+      this.el.tokenList.appendChild(item);
+      addedCount++;
+    });
+
+    if (addedCount > 0) {
+      this.el.tokenInput.value = '';
+      this.log(`トークンを ${addedCount} 個追加しました`, 'success');
+    }
+    return addedCount;
   }
 
   removeToken(token) {
@@ -482,7 +495,7 @@ class App {
     if (this.isRunning) return;
     const guildId = this.el.guildId.value.trim();
     const channelId = this.el.channelId.value.trim();
-    if (!guildId || !channelId) return this.log('IDが入力されていません', 'error');
+    if (!guildId || !channelId) return this.log('サーバーIDまたはチャンネルIDが未入力です', 'error');
     if (this.tokens.size === 0) return this.log('トークンがありません', 'error');
 
     this.isRunning = true;
@@ -511,7 +524,7 @@ class App {
     this.isRunning = false;
     this.el.joinBtn.disabled = false;
     this.el.joinBtn.textContent = 'VCに参加';
-    this.log(`完了: ${success}/${this.tokens.size} 成功`, 'success');
+    this.log(`完了: ${success}/${this.tokens.size} アカウント参加`, 'success');
   }
 
   stop() {
@@ -521,17 +534,26 @@ class App {
   }
 
   bindEvents() {
-    this.el.addBtn.addEventListener('click', () => this.addToken(this.el.tokenInput.value));
+    // 追加ボタン
+    this.el.addBtn.addEventListener('click', () => this.addTokensFromText(this.el.tokenInput.value));
+
+    // Enterで追加（Shift+Enterで改行）
+    this.el.tokenInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        this.addTokensFromText(this.el.tokenInput.value);
+      }
+    });
+
+    // ファイル読み込み
     this.el.uploadBtn.addEventListener('click', () => this.el.fileInput.click());
     this.el.fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = ev => {
-        const lines = ev.target.result.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-        let added = 0;
-        lines.forEach(t => { if (this.addToken(t)) added++; });
-        this.log(`ファイルから ${added} 個追加`, 'success');
+        this.addTokensFromText(ev.target.result);
+        this.log(`ファイルから読み込み完了`, 'success');
       };
       reader.readAsText(file);
     });
