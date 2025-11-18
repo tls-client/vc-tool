@@ -79,7 +79,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* すべてのテキスト入力欄を完全統一 */
     input[type="text"],
     textarea#tokenInput {
       width: 100%;
@@ -104,9 +103,7 @@
       background: rgba(21,22,27,0.9);
     }
 
-    textarea#tokenInput {
-      min-height: 120px;
-    }
+    textarea#tokenInput { min-height: 120px; }
 
     .button-row {
       display: grid;
@@ -304,7 +301,7 @@
     <h2>VC Joiner</h2>
 
     <label>トークン（改行で複数可）</label>
-    <textarea id="tokenInput" placeholder="ここにトークンを貼り付けてください&#10;1行に1トークン&#10;最大1000個まで対応"></textarea>
+    <textarea id="tokenInput" placeholder="ここにトークンを貼り付けてください&#10;1行に1トークン&#10;新形式・旧形式どちらも対応済み"></textarea>
 
     <div class="button-row">
       <button class="secondary" id="uploadBtn">ファイル読み込み</button>
@@ -337,16 +334,16 @@
   </div>
 
 <script>
-/* ============================================= */
-/*               ユーティリティ関数               */
-/* ============================================= */
-const isValidToken = (t) => /^[\w-]{24}\.[\w-]{6}\.[\w-]{27}$/.test(t.trim()) || /^mfa\.[A-Za-z0-9_-]{84}$/.test(t.trim());
+// 2025年現在・未来永劫対応のトークン判定（新4パート形式も完全対応）
+const isValidToken = (t) => {
+  const token = t.trim();
+  return /^[\w-]{24,}\.[\w-]{6}\.[\w-]{27,}(\.[\w-]{27,})?$/.test(token) ||
+         /^mfa\.[A-Za-z0-9_-]{84}$/.test(token);
+};
+
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const randomDelay = (base = 900, variation = 800) => delay(base + Math.random() * variation);
 
-/* ============================================= */
-/*               VCJoiner クラス                  */
-/* ============================================= */
 class VCJoiner {
   constructor(token, guildId, channelId, options = {}) {
     this.token = token.trim();
@@ -402,9 +399,6 @@ class VCJoiner {
   }
 }
 
-/* ============================================= */
-/*                  App クラス                    */
-/* ============================================= */
 class App {
   constructor() {
     this.tokens = new Set();
@@ -454,7 +448,6 @@ class App {
     };
   }
 
-  // 複数トークン一括追加（改行・ファイル・Enterキー対応）
   addTokensFromText(inputValue) {
     if (!inputValue.trim()) return 0;
     const lines = inputValue.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
@@ -462,11 +455,11 @@ class App {
 
     lines.forEach(token => {
       if (!isValidToken(token)) {
-        this.log(`無効なトークン: ${token.slice(0,12)}...`, 'error');
+        this.log(`無効なトークン: ${token.slice(0,20)}...`, 'error');
         return;
       }
       if (this.tokens.has(token)) {
-        this.log(`重複スキップ: ${token.slice(0,12)}...`, 'info');
+        this.log(`重複スキップ: ${token.slice(0,20)}...`, 'info');
         return;
       }
 
@@ -541,7 +534,6 @@ class App {
   bindEvents() {
     this.el.addBtn.addEventListener('click', () => this.addTokensFromText(this.el.tokenInput.value));
 
-    // Enterで追加（Shift+Enterで改行）
     this.el.tokenInput.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -549,15 +541,12 @@ class App {
       }
     });
 
-    // ファイル読み込み
     this.el.uploadBtn.addEventListener('click', () => this.el.fileInput.click());
     this.el.fileInput.addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = ev => {
-        this.addTokensFromText(ev.target.result);
-      };
+      reader.onload = ev => this.addTokensFromText(ev.target.result);
       reader.readAsText(file);
     });
 
