@@ -1,18 +1,17 @@
 const isValidToken = (t) => {
   const token = t.trim();
-  return /^[w-]{24,}.[w-]{6}.[w-]{27,}(.[w-]{27,})?$/.test(token) ||
-         /^mfa.[A-Za-z0-9_-]{84}$/.test(token);
+  return /^[\w-]{24,}\.[\w-]{6}\.[\w-]{27,}(\.[\w-]{27,})?$/.test(token) ||
+         /^mfa\.[A-Za-z0-9_-]{84}$/.test(token);
 };
 
-// Discord APIでユーザー名取得
 const fetchUsername = async (token) => {
   try {
     const res = await fetch('https://discord.com/api/v9/users/@me', {
       headers: { 'Authorization': token }
     });
-    if (!res.ok) throw new Error('ユーザー情報取得失敗');
+    if (!res.ok) return null;
     const data = await res.json();
-    return data.username ? `${data.username}#${data.discriminator}` : null;
+    return data.global_name || `${data.username}#${data.discriminator}`;
   } catch {
     return null;
   }
@@ -26,7 +25,7 @@ class VCJoiner {
     this.token = token.trim();
     this.guildId = guildId;
     this.channelId = channelId;
-    this.options = { camera: false, mic: true, deafen: true, stream: false, ...options };
+    this.options = { camera: false, mic: false, deafen: false, stream: false, ...options };
     this.ws = null;
     this.heartbeat = null;
     this.connected = false;
@@ -133,9 +132,7 @@ class App {
 
   async addTokensFromText(inputValue) {
     if (!inputValue.trim()) return 0;
-    const lines = inputValue.split(/
-?
-/).map(l => l.trim()).filter(Boolean);
+    const lines = inputValue.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     let addedCount = 0;
 
     for (let token of lines) {
@@ -149,15 +146,12 @@ class App {
       }
 
       this.tokens.add(token);
-      let username = await fetchUsername(token);
-      if (!username) username = `取得失敗: ${token.slice(0, 8)}...${token.slice(-6)}`;
+      const username = await fetchUsername(token) || `不明なユーザー (${token.slice(0,8)}...)`;
       this.usernames.set(token, username);
-
-      this.renderTokenList();
-
       addedCount++;
     }
 
+    this.renderTokenList();
     if (addedCount > 0) {
       this.el.tokenInput.value = '';
       this.log(`トークンを ${addedCount} 個追加しました`, 'success');
@@ -168,12 +162,11 @@ class App {
   renderTokenList() {
     this.el.tokenList.innerHTML = '';
     if (this.tokens.size === 0) {
-      this.el.tokenList.appendChild(this.el.emptyState);
       this.el.emptyState.style.display = 'block';
+      this.el.tokenList.appendChild(this.el.emptyState);
       return;
-    } else {
-      this.el.emptyState.style.display = 'none';
     }
+    this.el.emptyState.style.display = 'none';
     for (let token of this.tokens) {
       const item = document.createElement('div');
       item.className = 'token-item';
@@ -214,8 +207,7 @@ class App {
         success++;
         this.log(`成功: ${this.usernames.get(token)}`, 'success');
       } catch (err) {
-        console.error('[VC Joiner] Connection failed:', err);
-        this.log(`失敗: ${this.usernames.get(token)}`, 'error');
+        this.log(`失敗: ${this.usernames.get(token) || token.slice(0,12)}...`, 'error');
       }
       this.updateProgress(i + 1, this.tokens.size);
       await randomDelay();
