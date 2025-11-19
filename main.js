@@ -11,7 +11,8 @@ const fetchUsername = async (token) => {
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data.global_name || `${data.username}#${data.discriminator}`;
+    // 表示名があればそれ、なければユーザー名のみ（#0000は表示しない）
+    return data.global_name || data.username || '不明なユーザー';
   } catch {
     return null;
   }
@@ -171,7 +172,7 @@ class App {
       const item = document.createElement('div');
       item.className = 'token-item';
       item.dataset.token = token;
-      item.innerHTML = `<span>${this.usernames.get(token)}</span><button data-action="remove">削除</button>`;
+      item.innerHTML = `<span>${this.usernames.get(token) || '読み込み中...'}</span><button data-action="remove">削除</button>`;
       this.el.tokenList.appendChild(item);
     }
   }
@@ -219,7 +220,6 @@ class App {
     this.log(`完了: ${success}/${this.tokens.size} アカウント参加`, 'success');
   }
 
-  // ← ここを修正（参加時と同じチェック追加）
   stop() {
     const guildId = this.el.guildId.value.trim();
     const channelId = this.el.channelId.value.trim();
@@ -233,7 +233,6 @@ class App {
     this.clients.clear();
     this.log('全員退出しました', 'success');
   }
-  // ← 修正ここまで
 
   bindEvents() {
     this.el.addBtn.addEventListener('click', () => this.addTokensFromText(this.el.tokenInput.value));
