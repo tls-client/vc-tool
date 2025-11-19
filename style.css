@@ -1,7 +1,7 @@
 :root {
   --bg: #0d0e15;
   --card: #14151e;
-  --card-glass: rgba(20, 21, 30, 0.65);
+  --card-glass: rgba(20, 21, 30, 0.75);
   --accent: #5865f2;
   --glow: #64d6ff;
   --glow-strong: #80e8ff;
@@ -9,13 +9,12 @@
   --text: #e8eaed;
   --text-muted: #9ba1b0;
   --border: rgba(100, 214, 255, 0.15);
-  --shadow: 0 8px 32px rgba(0,0,0,0.6);
+  --shadow: 0 10px 40px rgba(0,0,0,0.7);
   --radius: 20px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-
 body {
   font-family: 'Inter', sans-serif;
   background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 40%, var(--bg) 100%);
@@ -32,12 +31,12 @@ body {
   background: var(--card-glass);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border);
-  padding: 40px;
+  padding: 36px 28px;
   border-radius: var(--radius);
   box-shadow: var(--shadow), 0 0 60px rgba(88, 101, 242, 0.15);
   width: 100%;
   max-width: 640px;
-  animation: floatIn .9s ease-out;
+  animation: floatIn 0.9s ease-out;
   position: relative;
   overflow: hidden;
 }
@@ -45,7 +44,7 @@ body {
 .card::before {
   content: '';
   position: absolute;
- 0 left 0 right 0 height: 2px;
+  top:0; left:0; right:0; height: 2px;
   background: linear-gradient(90deg, transparent, var(--glow), transparent);
   animation: shimmer 4s infinite;
 }
@@ -65,7 +64,7 @@ h2 {
 
 label {
   display: block;
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 14px;
   color: var(--glow);
   font-weight: 600;
@@ -76,7 +75,7 @@ input[type="text"], textarea#tokenInput {
   width: 100%;
   padding: 14px 16px;
   margin-top: 8px;
-  background: rgba(21,22,27,0.7);
+  background: rgba(21,22,27,0.75);
   border: 1px solid var(--border);
   border-radius: 14px;
   color: #fff;
@@ -86,31 +85,26 @@ input[type="text"], textarea#tokenInput {
   backdrop-filter: blur(10px);
   resize: vertical;
 }
-
 input[type="text"]:focus, textarea#tokenInput:focus {
   outline: none;
   border-color: var(--glow);
   box-shadow: 0 0 0 4px rgba(100,214,255,0.2), 0 8px 25px rgba(100,214,255,0.15);
   background: rgba(21,22,27,0.9);
 }
-
 textarea#tokenInput { min-height: 120px; }
 
 .button-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
   margin-top: 10px;
-}
-@media (max-width: 480px) {
-  .button-row { grid-template-columns: 1fr; }
 }
 
 .hidden-input { display: none; }
 
 .token-list {
   margin-top: 14px;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   background: rgba(21,22,27,0.5);
   border: 1px solid var(--border);
@@ -118,7 +112,6 @@ textarea#tokenInput { min-height: 120px; }
   padding: 12px;
   backdrop-filter: blur(10px);
 }
-
 .token-item {
   display: flex;
   justify-content: space-between;
@@ -132,7 +125,7 @@ textarea#tokenInput { min-height: 120px; }
   border: 1px solid transparent;
   transition: var(--transition);
 }
-.token-item:hover { border-color: var(--glow); transform: translateX(4px); }
+.token-item:hover { border-color: var(--glow); transform: translateX(3px); }
 .token-item button {
   background: var(--danger);
   color: #fff;
@@ -154,32 +147,19 @@ textarea#tokenInput { min-height: 120px; }
   opacity: 0.8;
 }
 
-/* 配信ボタン絶対途切れない最終配置（これで100%収まる） */
 .toggle-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 32px 0 36px;
-  padding: 0 4px;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 14px;
+  margin: 28px 0 32px;
 }
-
-@media (min-width: 620px) {
-  .toggle-row {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px 20px;
-    padding: 0 6px;
-  }
-}
-
 .checkbox {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 15px;
+  gap: 10px;
+  font-size: 14.5px;
   font-weight: 500;
-  min-width: 0;
 }
-
 .checkbox input[type="checkbox"] {
   appearance: none;
   flex-shrink: 0;
@@ -189,45 +169,26 @@ textarea#tokenInput { min-height: 120px; }
   border-radius: 50px;
   position: relative;
   transition: var(--transition);
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
 }
-
 .checkbox input::before {
   content: '';
   position: absolute;
   width: 20px;
   height: 20px;
-  background: linear-gradient(135deg, #fff, #f0f0f0);
+  background: linear-gradient(135deg,#fff,#f0f0f0);
   border-radius: 50%;
-  top: 3px;
-  left: 3px;
+  top:3px; left:3px;
   transition: var(--transition);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
-
-.checkbox input:checked {
-  background: linear-gradient(135deg, var(--accent), var(--glow));
-}
-
-.checkbox input:checked::before {
-  transform: translateX(20px);
-}
-
-.checkbox input:checked + span {
-  color: var(--glow-strong);
-}
-
-.checkbox span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  font-size: 14.8px;
-  /* 少し小さくして確実に収まる */
-}
+.checkbox input:checked { background: linear-gradient(135deg,var(--accent),var(--glow)); }
+.checkbox input:checked::before { transform: translateX(20px); }
+.checkbox input:checked + span { color: var(--glow-strong); }
+.checkbox span { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 button.secondary {
-  padding: 13px 20px;
+  padding: 12px 18px;
   background: rgba(88,101,242,0.15);
   color: var(--glow);
   border: 1px solid rgba(100,214,255,0.3);
@@ -242,13 +203,13 @@ button.secondary:hover {
   background: var(--glow);
   color: #000;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(100,214,255,0.3);
+  box-shadow: 0 6px 20px rgba(100,214,255,0.25);
 }
 
 button.primary {
   width: 100%;
-  padding: 18px;
-  margin-top: 28px;
+  padding: 16px;
+  margin-top: 24px;
   border: none;
   border-radius: 16px;
   font-weight: 800;
@@ -258,24 +219,20 @@ button.primary {
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
 }
-#joinBtn  { background: linear-gradient(135deg, #5865f2, #64d6ff); }
-#leaveBtn { background: linear-gradient(135deg, #ff5c5c, #ff2e5e); margin-top: 14px; }
+#joinBtn { background: linear-gradient(135deg,#5865f2,#64d6ff); }
+#leaveBtn { background: linear-gradient(135deg,#ff5c5c,#ff2e5e); margin-top: 12px; }
 button.primary::before {
-  content: ''; position: absolute; top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  content: ''; position: absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
   transition: var(--transition);
 }
-button.primary:hover::before { left: 100%; }
-button.primary:hover:not(:disabled) {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(88,101,242,0.5);
-}
+button.primary:hover::before { left:100%; }
+button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(88,101,242,0.4); }
 
 .progress {
-  margin-top: 20px;
+  margin-top: 18px;
   height: 8px;
   background: rgba(255,255,255,0.05);
   border-radius: 4px;
@@ -285,7 +242,7 @@ button.primary:hover:not(:disabled) {
 .progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--accent), var(--glow));
+  background: linear-gradient(90deg,var(--accent),var(--glow));
   border-radius: 4px;
   transition: width .6s ease;
   box-shadow: 0 0 0 20px rgba(100,214,255,0.6);
@@ -293,9 +250,9 @@ button.primary:hover:not(:disabled) {
 
 .log {
   margin-top: 24px;
-  max-height: 220px;
+  max-height: 240px;
   overflow-y: auto;
-  background: rgba(21,22,27,0.5);
+  background: rgba(21,22,27,0.55);
   border-radius: 16px;
   padding: 16px;
   font-family: 'Courier New', monospace;
@@ -309,7 +266,9 @@ button.primary:hover:not(:disabled) {
 .log-line.error   { color: #ff6b9d; }
 .log-line.info    { color: #aaa; }
 
-@media (max-width: 480px) {
-  .card { padding: 28px 24px; }
-  h2 { font-size: 28px; }
+@media(max-width:480px){
+  .card{padding:24px 16px;}
+  h2{font-size:26px;}
+  .toggle-row{gap:10px;}
+  button.primary{font-size:16px; padding:14px;}
 }
