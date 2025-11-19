@@ -1,7 +1,7 @@
 :root {
   --bg: #0d0e15;
   --card: #14151e;
-  --card-glass: rgba(20, 21, 30, 0.75);
+  --card-glass: rgba(20, 21, 30, 0.65);
   --accent: #5865f2;
   --glow: #64d6ff;
   --glow-strong: #80e8ff;
@@ -9,12 +9,13 @@
   --text: #e8eaed;
   --text-muted: #9ba1b0;
   --border: rgba(100, 214, 255, 0.15);
-  --shadow: 0 10px 40px rgba(0,0,0,0.7);
+  --shadow: 0 8px 32px rgba(0,0,0,0.6);
   --radius: 20px;
-  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
+
 body {
   font-family: 'Inter', sans-serif;
   background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 40%, var(--bg) 100%);
@@ -31,12 +32,12 @@ body {
   background: var(--card-glass);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border);
-  padding: 36px 28px;
+  padding: 36px 32px;
   border-radius: var(--radius);
   box-shadow: var(--shadow), 0 0 60px rgba(88, 101, 242, 0.15);
   width: 100%;
   max-width: 640px;
-  animation: floatIn 0.9s ease-out;
+  animation: floatIn .9s ease-out;
   position: relative;
   overflow: hidden;
 }
@@ -44,7 +45,7 @@ body {
 .card::before {
   content: '';
   position: absolute;
-  top:0; left:0; right:0; height: 2px;
+  top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent, var(--glow), transparent);
   animation: shimmer 4s infinite;
 }
@@ -55,8 +56,8 @@ body {
 h2 {
   color: var(--glow-strong);
   text-align: center;
-  margin-bottom: 32px;
-  font-size: 32px;
+  margin-bottom: 28px;
+  font-size: 30px;
   font-weight: 800;
   letter-spacing: -0.5px;
   text-shadow: 0 0 20px rgba(100,214,255,0.5);
@@ -73,38 +74,43 @@ label {
 
 input[type="text"], textarea#tokenInput {
   width: 100%;
-  padding: 14px 16px;
-  margin-top: 8px;
-  background: rgba(21,22,27,0.75);
+  padding: 12px 14px;
+  margin-top: 6px;
+  background: rgba(21,22,27,0.7);
   border: 1px solid var(--border);
   border-radius: 14px;
   color: #fff;
   font-family: 'Courier New', monospace;
-  font-size: 15px;
+  font-size: 14.5px;
   transition: var(--transition);
   backdrop-filter: blur(10px);
   resize: vertical;
 }
+
 input[type="text"]:focus, textarea#tokenInput:focus {
   outline: none;
   border-color: var(--glow);
   box-shadow: 0 0 0 4px rgba(100,214,255,0.2), 0 8px 25px rgba(100,214,255,0.15);
   background: rgba(21,22,27,0.9);
 }
+
 textarea#tokenInput { min-height: 120px; }
 
 .button-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-top: 10px;
+}
+@media (max-width: 480px) {
+  .button-row { grid-template-columns: 1fr; }
 }
 
 .hidden-input { display: none; }
 
 .token-list {
   margin-top: 14px;
-  max-height: 220px;
+  max-height: 200px;
   overflow-y: auto;
   background: rgba(21,22,27,0.5);
   border: 1px solid var(--border);
@@ -112,6 +118,7 @@ textarea#tokenInput { min-height: 120px; }
   padding: 12px;
   backdrop-filter: blur(10px);
 }
+
 .token-item {
   display: flex;
   justify-content: space-between;
@@ -125,7 +132,7 @@ textarea#tokenInput { min-height: 120px; }
   border: 1px solid transparent;
   transition: var(--transition);
 }
-.token-item:hover { border-color: var(--glow); transform: translateX(3px); }
+.token-item:hover { border-color: var(--glow); transform: translateX(4px); }
 .token-item button {
   background: var(--danger);
   color: #fff;
@@ -141,7 +148,7 @@ textarea#tokenInput { min-height: 120px; }
 .empty-state {
   text-align: center;
   color: var(--text-muted);
-  padding: 32px 16px;
+  padding: 28px 16px;
   font-size: 15px;
   font-weight: 500;
   opacity: 0.8;
@@ -149,17 +156,20 @@ textarea#tokenInput { min-height: 120px; }
 
 .toggle-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
   margin: 28px 0 32px;
 }
+
 .checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 14.5px;
   font-weight: 500;
+  min-width: 0;
 }
+
 .checkbox input[type="checkbox"] {
   appearance: none;
   flex-shrink: 0;
@@ -169,32 +179,47 @@ textarea#tokenInput { min-height: 120px; }
   border-radius: 50px;
   position: relative;
   transition: var(--transition);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
 }
+
 .checkbox input::before {
   content: '';
   position: absolute;
   width: 20px;
   height: 20px;
-  background: linear-gradient(135deg,#fff,#f0f0f0);
+  background: linear-gradient(135deg, #fff, #f0f0f0);
   border-radius: 50%;
-  top:3px; left:3px;
+  top: 3px;
+  left: 3px;
   transition: var(--transition);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
-.checkbox input:checked { background: linear-gradient(135deg,var(--accent),var(--glow)); }
-.checkbox input:checked::before { transform: translateX(20px); }
+
+.checkbox input:checked {
+  background: linear-gradient(135deg, var(--accent), var(--glow));
+}
+
+.checkbox input:checked::before {
+  transform: translateX(20px);
+}
+
 .checkbox input:checked + span { color: var(--glow-strong); }
-.checkbox span { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.checkbox span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
 
 button.secondary {
-  padding: 12px 18px;
+  padding: 12px 20px;
   background: rgba(88,101,242,0.15);
   color: var(--glow);
   border: 1px solid rgba(100,214,255,0.3);
   border-radius: 14px;
   font-weight: 600;
-  font-size: 14.5px;
+  font-size: 14px;
   cursor: pointer;
   transition: var(--transition);
   backdrop-filter: blur(10px);
@@ -203,7 +228,7 @@ button.secondary:hover {
   background: var(--glow);
   color: #000;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(100,214,255,0.25);
+  box-shadow: 0 8px 25px rgba(100,214,255,0.3);
 }
 
 button.primary {
@@ -213,23 +238,27 @@ button.primary {
   border: none;
   border-radius: 16px;
   font-weight: 800;
-  font-size: 18px;
+  font-size: 17px;
   color: #fff;
   cursor: pointer;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
-#joinBtn { background: linear-gradient(135deg,#5865f2,#64d6ff); }
-#leaveBtn { background: linear-gradient(135deg,#ff5c5c,#ff2e5e); margin-top: 12px; }
+#joinBtn  { background: linear-gradient(135deg, #5865f2, #64d6ff); }
+#leaveBtn { background: linear-gradient(135deg, #ff5c5c, #ff2e5e); margin-top: 12px; }
 button.primary::before {
-  content: ''; position: absolute; top:0; left:-100%; width:100%; height:100%;
-  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
   transition: var(--transition);
 }
-button.primary:hover::before { left:100%; }
-button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(88,101,242,0.4); }
+button.primary:hover::before { left: 100%; }
+button.primary:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 45px rgba(88,101,242,0.5);
+}
 
 .progress {
   margin-top: 18px;
@@ -242,22 +271,22 @@ button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0
 .progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg,var(--accent),var(--glow));
+  background: linear-gradient(90deg, var(--accent), var(--glow));
   border-radius: 4px;
   transition: width .6s ease;
   box-shadow: 0 0 0 20px rgba(100,214,255,0.6);
 }
 
 .log {
-  margin-top: 24px;
-  max-height: 240px;
+  margin-top: 20px;
+  max-height: 220px;
   overflow-y: auto;
-  background: rgba(21,22,27,0.55);
+  background: rgba(21,22,27,0.5);
   border-radius: 16px;
-  padding: 16px;
+  padding: 14px;
   font-family: 'Courier New', monospace;
   font-size: 13.5px;
-  line-height: 1.7;
+  line-height: 1.6;
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
 }
@@ -266,9 +295,8 @@ button.primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0
 .log-line.error   { color: #ff6b9d; }
 .log-line.info    { color: #aaa; }
 
-@media(max-width:480px){
-  .card{padding:24px 16px;}
-  h2{font-size:26px;}
-  .toggle-row{gap:10px;}
-  button.primary{font-size:16px; padding:14px;}
+@media (max-width: 480px) {
+  .card { padding: 24px 20px; }
+  h2 { font-size: 26px; }
+  .checkbox span { font-size: 13px; }
 }
