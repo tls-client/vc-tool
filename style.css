@@ -154,29 +154,33 @@ textarea#tokenInput { min-height: 120px; }
   opacity: 0.8;
 }
 
-/* PCで絶対に4つ横並び・「配信」ボタンも完全表示 */
+/* ──────────────────────────────── */
+/*  最終決定：最も美しいトグル配置  */
+/* ──────────────────────────────── */
 .toggle-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 32px 0;
-  min-width: 0;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+  margin: 34px 0;
+  padding: 0 8px;
 }
-@media (min-width: 560px) {
+
+@media (min-width: 600px) {
   .toggle-row {
     grid-template-columns: repeat(4, 1fr);
+    gap: 18px 28px;
+    padding: 0 12px;
   }
 }
 
 .checkbox {
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  user-select: none;
-  font-size: 15px;
+  gap: 14px;
+  font-size: 15.5px;
   font-weight: 500;
 }
+
 .checkbox input {
   appearance: none;
   width: 48px; height: 26px;
@@ -185,6 +189,7 @@ textarea#tokenInput { min-height: 120px; }
   position: relative;
   transition: var(--transition);
   box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+  flex-shrink: 0;
 }
 .checkbox input::before {
   content: ''; position: absolute;
@@ -201,13 +206,13 @@ textarea#tokenInput { min-height: 120px; }
 .checkbox input:checked::before { transform: translateX(22px); }
 .checkbox input:checked + span { color: var(--glow-strong); }
 
-/* 110px → 100pxに下げて確実に収まるように */
 .checkbox span {
   white-space: nowrap;
-  display: inline-block;
-  min-width: 100px;
-  text-align: left;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+/* ──────────────────────────────── */
 
 button.secondary {
   padding: 13px 20px;
