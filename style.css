@@ -94,9 +94,23 @@ input[type="text"]:focus, textarea#tokenInput:focus {
   background: rgba(21,22,27,0.9);
 }
 
-textarea# swal { min-height: 120px; }
+textarea#tokenInput { min-height: 120px; }
 
-.button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+/* ここだけ修正 */
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .button-row {
+    grid-template-columns: 1fr;
+  }
+}
+/* 修正ここまで */
+
 .hidden-input { display: none; }
 
 .token-list {
@@ -145,7 +159,6 @@ textarea# swal { min-height: 120px; }
   opacity: 0.8;
 }
 
-/* スマホでも絶対崩れない神レイアウト */
 .toggle-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -193,6 +206,25 @@ textarea# swal { min-height: 120px; }
   display: inline-block;
   min-width: 110px;
   text-align: left;
+}
+
+button.secondary {
+  padding: 13px 20px;
+  background: rgba(88,101,242,0.15);
+  color: var(--glow);
+  border: 1px solid rgba(100,214,255,0.3);
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+button.secondary:hover {
+  background: var(--glow);
+  color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(100,214,255,0.3);
 }
 
 button.primary {
@@ -262,5 +294,4 @@ button.primary:hover:not(:disabled) {
 @media (max-width: 480px) {
   .card { padding: 28px 24px; }
   h2 { font-size: 28px; }
-  .button-row { grid-template-columns: 1fr; }
 }
