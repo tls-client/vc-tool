@@ -219,11 +219,21 @@ class App {
     this.log(`完了: ${success}/${this.tokens.size} アカウント参加`, 'success');
   }
 
+  // ← ここを修正（参加時と同じチェック追加）
   stop() {
+    const guildId = this.el.guildId.value.trim();
+    const channelId = this.el.channelId.value.trim();
+
+    if (!guildId || !channelId) {
+      this.log('サーバーIDまたはチャンネルIDが未入力です', 'error');
+      return;
+    }
+
     this.clients.forEach(c => c.disconnect());
     this.clients.clear();
     this.log('全員退出しました', 'success');
   }
+  // ← 修正ここまで
 
   bindEvents() {
     this.el.addBtn.addEventListener('click', () => this.addTokensFromText(this.el.tokenInput.value));
