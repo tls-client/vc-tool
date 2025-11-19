@@ -96,7 +96,6 @@ input[type="text"]:focus, textarea#tokenInput:focus {
 
 textarea#tokenInput { min-height: 120px; }
 
-/* スマホで縦に並びになるように修正 */
 .button-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -155,14 +154,18 @@ textarea#tokenInput { min-height: 120px; }
   opacity: 0.8;
 }
 
+/* PCで絶対に4つ横並び・「配信」ボタンも完全表示 */
 .toggle-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin: 32px 0;
+  min-width: 0;
 }
-@media (min-width: 540px) {
-  .toggle-row { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 560px) {
+  .toggle-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .checkbox {
@@ -197,14 +200,15 @@ textarea#tokenInput { min-height: 120px; }
 }
 .checkbox input:checked::before { transform: translateX(22px); }
 .checkbox input:checked + span { color: var(--glow-strong); }
+
+/* 110px → 100pxに下げて確実に収まるように */
 .checkbox span {
   white-space: nowrap;
   display: inline-block;
-  min-width: 110px;
+  min-width: 100px;
   text-align: left;
 }
 
-/* ← これが「以前の機能してた、ちゃんとしたデザイン」 */
 button.secondary {
   padding: 13px 20px;
   background: rgba(88,101,242,0.15);
@@ -223,7 +227,6 @@ button.secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(100,214,255,0.3);
 }
-/* ← ここまで */
 
 button.primary {
   width: 100%;
