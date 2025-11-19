@@ -11,7 +11,7 @@ const fetchUsername = async (token) => {
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data.username; // ← ここ！必ずユーザー名（@oxymrn など）になる
+    return data.username;
   } catch {
     return null;
   }
@@ -69,10 +69,10 @@ class VCJoiner {
       d: {
         guild_id: this.guildId,
         channel_id: this.channelId,
-        self_mute: !this.options.mic,        // マイクON → self_mute: false
-        self_deaf: this.options.deafen,      // 無音ON → self_deaf: true
+        self_mute: !this.options.mic,
+        self_deaf: this.options.deafen,
         self_video: this.options.camera,
-        self_stream: this.options.stream     // 配信ON → stream: true
+        self_stream: this.options.stream
       }
     }));
   }
@@ -299,6 +299,11 @@ class App {
     ['cam', 'mic', 'deafen', 'stream'].forEach(id => {
       this.el[id].onchange = () => this.updateAllClients();
     });
+  }
+
+  updateProgress(current, total) {
+    const percent = Math.round((current / total) * 100);
+    this.el.progress.style.width = `${percent}%`;
   }
 }
 
