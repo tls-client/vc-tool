@@ -96,20 +96,16 @@ input[type="text"]:focus, textarea#tokenInput:focus {
 
 textarea#tokenInput { min-height: 120px; }
 
-/* ここだけ修正 */
+/* スマホで縦に並びになるように修正 */
 .button-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
   margin-top: 10px;
 }
-
 @media (max-width: 480px) {
-  .button-row {
-    grid-template-columns: 1fr;
-  }
+  .button-row { grid-template-columns: 1fr; }
 }
-/* 修正ここまで */
 
 .hidden-input { display: none; }
 
@@ -208,6 +204,7 @@ textarea#tokenInput { min-height: 120px; }
   text-align: left;
 }
 
+/* ← これが「以前の機能してた、ちゃんとしたデザイン」 */
 button.secondary {
   padding: 13px 20px;
   background: rgba(88,101,242,0.15);
@@ -226,6 +223,7 @@ button.secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(100,214,255,0.3);
 }
+/* ← ここまで */
 
 button.primary {
   width: 100%;
